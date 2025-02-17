@@ -3,6 +3,13 @@ from os.path import isfile, join
 import numpy as np
 from playsound import playsound
 
+'''
+Adlib library ideas:
+- Charlie
+- Larry David
+- Khaled
+'''
+
 # sound processing stuff
 FORMAT = pyaudio.paInt16
 CHANNELS: int = 1
@@ -15,7 +22,7 @@ PAUSE_DURATION: float = 0.4
 ADLIB_FOLDER: str = "adlibs"
 ADLIBS: list[str] = [f for f in os.listdir("adlibs") if f.endswith(".mp3")] # default list, every mp3 file in ADLIB_FOLDER
 
-CURATED_ADLIBS: list[str] = ["goddamn.mp3", "oh-my-god.mp3", "yeah.mp3", "its-lit.mp3", "straight-up.mp3", "stroke-my-cactus.mp3"] 
+CURATED_ADLIBS: list[str] = ["goddamn.mp3", "oh-my-god.mp3", "yeah.mp3", "its-lit.mp3", "straight-up.mp3", "stroke-my-cactus.mp3"]
 
 
 
@@ -72,8 +79,8 @@ def awaken_travis():
 
 
 
-HINDSIGHT: int = 5 # how far to look back in prms values
-DIFFERENCE_THRESHOLD: int = -50 # ∆v
+HINDSIGHT: int = 20 # how far to look back in prms values
+DIFFERENCE_THRESHOLD: int = -80 # ∆v
 ALT_PAUSE_DURATION: float = 2
 
 def process_prms_values(prms_values = list[float], rms = float, last_time = time) -> bool:
@@ -131,9 +138,6 @@ def alt_awaken_travis():
 
             last_time = time.time()
 
-                
-
-
     stream.stop_stream()
     stream.close()
     audio_detection.terminate()
@@ -147,3 +151,4 @@ if __name__ == "__main__":
     print("Awakening Travis...")
     print(f"Detected in adlib folder: {ADLIBS}")
     alt_awaken_travis()
+    #awaken_travis()
