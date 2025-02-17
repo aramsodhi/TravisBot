@@ -51,7 +51,7 @@ def awaken_travis():
         data = stream.read(CHUNK)
         audio_data = np.frombuffer(data, dtype=np.int16)
         rms_value = np.sqrt(np.mean(np.abs(audio_data ** 2)))
-        
+        print(rms_value)
 
         if rms_value < THRESHOLD:
             
@@ -59,7 +59,7 @@ def awaken_travis():
                 pause_start_time = time.time()
             
             elif time.time() - pause_start_time >= PAUSE_DURATION:
-                play_adlib(ADLIBS)
+                play_adlib(CURATED_ADLIBS)
                 pause_start_time = None
 
         else:
@@ -69,7 +69,81 @@ def awaken_travis():
     stream.close()
     audio_detection.terminate()
 
+
+
+
+HINDSIGHT: int = 5 # how far to look back in prms values
+DIFFERENCE_THRESHOLD: int = -50 # ∆v
+ALT_PAUSE_DURATION: float = 2
+
+def process_prms_values(prms_values = list[float], rms = float, last_time = time) -> bool:
+    '''
+    Takes prms values, the current rms value, and timestamp of previous adlib.
+    Determines if it's time to play an adlib.
+    Prints out status messages.
+    '''
+
+    avg: float = sum(prms_values) / len(prms_values)
+    diff: float = rms - avg
+    
+    prms_values.pop(0)
+    prms_values.append(rms)
+
+    if diff <= DIFFERENCE_THRESHOLD and time.time() - last_time >= ALT_PAUSE_DURATION:
+        to_lib = True
+        iflib: str = "ADLIB"
+
+    elif diff <= DIFFERENCE_THRESHOLD:
+        to_lib = False
+        iflib: str = "_____"
+
+    else:
+        to_lib = False
+        iflib: str= "     "
+
+    if diff < 0:
+        strdiff:str = "-" + str(-diff)[:5]
+    else:
+        strdiff:str = " " + str(diff)[:5]
+
+    print(f"{iflib} diff: {str(strdiff)}, " + ("#" * int(-diff)))
+    #print(f"{iflib} : Avg: {avg}, RMS: {rms}, diff: {diff}")
+    return to_lib
+
+def alt_awaken_travis():
+    print("Alt-Travis is awake!!")
+    prms_values = []
+    last_time = time.time()
+
+    while len(prms_values) < HINDSIGHT:
+        prms_values.append(0)
+
+
+    while True:
+        data = stream.read(CHUNK)
+        audio_data = np.frombuffer(data, dtype=np.int16)
+        rms_value = np.sqrt(np.mean(np.abs(audio_data ** 2)))
+
+
+        if process_prms_values(prms_values, rms_value, last_time):
+            #print(f"{time.time() - last_time} >= {ALT_PAUSE_DURATION}")
+            play_adlib(CURATED_ADLIBS)
+
+            last_time = time.time()
+
+                
+
+
+    stream.stop_stream()
+    stream.close()
+    audio_detection.terminate()
+
+
+    
+
+
+
 if __name__ == "__main__":
     print("Awakening Travis...")
     print(f"Detected in adlib folder: {ADLIBS}")
-    awaken_travis()
+    alt_awaken_travis()
