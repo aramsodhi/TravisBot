@@ -28,7 +28,7 @@ stream = audio_detection.open(
     input=True,
     frames_per_buffer=CHUNK
 )
-
+# test
 
 def play_adlib(fromAdlibs: list[str] = ADLIBS) -> None:
     '''
