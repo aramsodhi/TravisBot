@@ -79,8 +79,8 @@ def awaken_travis():
 
 
 
-HINDSIGHT: int = 20 # how far to look back in prms values
-DIFFERENCE_THRESHOLD: int = -80 # ∆v
+HINDSIGHT: int = 5 # how far to look back in prms values
+DIFFERENCE_THRESHOLD: int = -50 # ∆v -80
 ALT_PAUSE_DURATION: float = 2
 
 def process_prms_values(prms_values = list[float], rms = float, last_time = time) -> bool:
